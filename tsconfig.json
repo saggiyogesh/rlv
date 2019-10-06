@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "lib": ["es6", "dom"],
+    "types": ["react", "react-native"],
+    "module": "commonjs",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "declaration": true,
+    "rootDir": "src",
+    "strict": true,
+    "noImplicitReturns": true,
+    "removeComments": false,
+    "jsx": "react",
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "esModuleInterop": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "build"]
+}
