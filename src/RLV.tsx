@@ -23,10 +23,9 @@ interface RLVProps {
   rlvStyle?: ViewStyle;
   rlvContentContainerStyle?: ViewStyle;
   cellHeight?: number;
-  forceNonDeterministicRendering?: boolean;
   noDataMessageRenderer?: () => JSX.Element | JSX.Element[] | undefined;
   updateDataProvider?: (callback: (id: string, newUpdateData: GenericObjectType<any>) => void) => void;
-  getDataById?: (callback: (id: string) => {}) => void;
+  getDataById?: (callback: (id: string) => GenericObjectType<any>) => void;
   setNewData?: (callback: (newData: any[]) => void) => void;
 }
 
@@ -38,21 +37,21 @@ interface RLVState {
   idIndexMap: GenericObjectType<number>;
   layoutProvider: LayoutProvider;
 }
-export default function RLV({
-  rowRenderer,
-  getData,
-  limit = 10,
-  layoutProviderType,
-  containerStyle,
-  rlvStyle,
-  rlvContentContainerStyle,
-  cellHeight,
-  forceNonDeterministicRendering,
-  noDataMessageRenderer,
-  updateDataProvider, // update existing data
-  getDataById,
-  setNewData, // to re render RLV, re init everything
-}: RLVProps) {
+export default function RLV(props: RLVProps) {
+  const {
+    rowRenderer,
+    getData,
+    limit = 10,
+    layoutProviderType,
+    containerStyle,
+    rlvStyle,
+    rlvContentContainerStyle,
+    cellHeight,
+    noDataMessageRenderer,
+    updateDataProvider, // update existing data
+    getDataById,
+    setNewData, // to re render RLV, re init everything
+  } = props;
   const [state, setState] = useState<RLVState>({
     dataProvider: new DataProvider((r1, r2) => {
       return r1 !== r2;
@@ -169,7 +168,7 @@ export default function RLV({
           layoutProvider={layoutProvider}
           rowRenderer={rowRenderer}
           renderFooter={renderFooter}
-          forceNonDeterministicRendering={forceNonDeterministicRendering}
+          {...props}
         />
       ) : (
         !showFooterLoader && noDataMessageRenderer && noDataMessageRenderer()

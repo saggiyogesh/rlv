@@ -29,6 +29,7 @@ module.exports = {
     '@typescript-eslint/camelcase': 'warn',
     radix: 'warn',
     'import/no-unresolved': 'warn',
-    '@typescript-eslint/no-use-before-define': 'off'
+    '@typescript-eslint/no-use-before-define': 'off',
+    'react/jsx-props-no-spreading': 'warn'
   },
 };

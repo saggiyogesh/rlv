@@ -14,12 +14,10 @@ interface RLVProps {
     rlvStyle?: ViewStyle;
     rlvContentContainerStyle?: ViewStyle;
     cellHeight?: number;
-    forceNonDeterministicRendering?: boolean;
     noDataMessageRenderer?: () => JSX.Element | JSX.Element[] | undefined;
     updateDataProvider?: (callback: (id: string, newUpdateData: GenericObjectType<any>) => void) => void;
-    getDataById?: (callback: (id: string) => {}) => void;
+    getDataById?: (callback: (id: string) => GenericObjectType<any>) => void;
     setNewData?: (callback: (newData: any[]) => void) => void;
 }
-export default function RLV({ rowRenderer, getData, limit, layoutProviderType, containerStyle, rlvStyle, rlvContentContainerStyle, cellHeight, forceNonDeterministicRendering, noDataMessageRenderer, updateDataProvider, // update existing data
-getDataById, setNewData, }: RLVProps): JSX.Element;
+export default function RLV(props: RLVProps): JSX.Element;
 export {};

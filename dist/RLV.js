@@ -11,8 +11,9 @@ const react_1 = __importStar(require("react"));
 const react_native_1 = require("react-native");
 const recyclerlistview_1 = require("recyclerlistview");
 const LayoutUtil_1 = require("./LayoutUtil");
-function RLV({ rowRenderer, getData, limit = 10, layoutProviderType, containerStyle, rlvStyle, rlvContentContainerStyle, cellHeight, forceNonDeterministicRendering, noDataMessageRenderer, updateDataProvider, // update existing data
-getDataById, setNewData, }) {
+function RLV(props) {
+    const { rowRenderer, getData, limit = 10, layoutProviderType, containerStyle, rlvStyle, rlvContentContainerStyle, cellHeight, noDataMessageRenderer, updateDataProvider, // update existing data
+    getDataById, setNewData, } = props;
     const [state, setState] = react_1.useState({
         dataProvider: new recyclerlistview_1.DataProvider((r1, r2) => {
             return r1 !== r2;
@@ -99,7 +100,7 @@ getDataById, setNewData, }) {
     react_1.useEffect(() => {
         fetchMoreData();
     }, []);
-    return (react_1.default.createElement(react_native_1.View, { style: [styles.container, containerStyle] }, count > 0 ? (react_1.default.createElement(recyclerlistview_1.RecyclerListView, { style: [styles.fl1, rlvStyle], contentContainerStyle: [styles.mar3, rlvContentContainerStyle], onEndReached: handleListEnd, dataProvider: dataProvider, layoutProvider: layoutProvider, rowRenderer: rowRenderer, renderFooter: renderFooter, forceNonDeterministicRendering: forceNonDeterministicRendering })) : (!showFooterLoader && noDataMessageRenderer && noDataMessageRenderer())));
+    return (react_1.default.createElement(react_native_1.View, { style: [styles.container, containerStyle] }, count > 0 ? (react_1.default.createElement(recyclerlistview_1.RecyclerListView, Object.assign({ style: [styles.fl1, rlvStyle], contentContainerStyle: [styles.mar3, rlvContentContainerStyle], onEndReached: handleListEnd, dataProvider: dataProvider, layoutProvider: layoutProvider, rowRenderer: rowRenderer, renderFooter: renderFooter }, props))) : (!showFooterLoader && noDataMessageRenderer && noDataMessageRenderer())));
 }
 exports.default = RLV;
 const styles = react_native_1.StyleSheet.create({
