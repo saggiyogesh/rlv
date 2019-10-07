@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator, StyleSheet, ViewStyle } from 'react-native';
 import { DataProvider, RecyclerListView, LayoutProvider } from 'recyclerlistview';
+import { RecyclerListViewProps } from 'recyclerlistview/dist/reactnative/core/RecyclerListView';
 import { getLayoutProvider, LayoutProviderTypes } from './LayoutUtil';
 
 export type GenericObjectType<T = string> = {
@@ -14,7 +15,7 @@ export type RowRenderer = (
   extendedState?: object,
 ) => JSX.Element | JSX.Element[] | null;
 
-interface RLVProps {
+interface RLVProps extends Omit<RecyclerListViewProps, 'dataProvider' | 'layoutProvider'> {
   rowRenderer: RowRenderer;
   getData: (skip: number, limit: number) => Promise<[]>;
   limit?: number;

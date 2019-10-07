@@ -1,11 +1,12 @@
 /// <reference types="react" />
 import { ViewStyle } from 'react-native';
+import { RecyclerListViewProps } from 'recyclerlistview/dist/reactnative/core/RecyclerListView';
 import { LayoutProviderTypes } from './LayoutUtil';
 export declare type GenericObjectType<T = string> = {
     [k: string]: T;
 };
 export declare type RowRenderer = (type: string | number, data: any, index: number, extendedState?: object) => JSX.Element | JSX.Element[] | null;
-interface RLVProps {
+interface RLVProps extends Omit<RecyclerListViewProps, 'dataProvider' | 'layoutProvider'> {
     rowRenderer: RowRenderer;
     getData: (skip: number, limit: number) => Promise<[]>;
     limit?: number;
