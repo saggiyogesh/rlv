@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { View, ActivityIndicator, StyleSheet, ViewStyle, NativeModules } from 'react-native';
+import React, { useState, useLayoutEffect } from 'react';
+import { View, ActivityIndicator, StyleSheet, ViewStyle } from 'react-native';
 
 // @ts-ignore
 import { ComponentDidAppearEvent } from 'react-native-navigation';
@@ -57,7 +57,7 @@ interface RLVProps extends Omit<RecyclerListViewProps, 'dataProvider' | 'layoutP
   updateDataProvider?: (callback: (id: string, newUpdateData: GenericObjectType<any>) => void) => void;
   getDataById?: (callback: (id: string) => GenericObjectType<any>) => void;
   setNewData?: (callback: (newData: any[]) => void) => void;
-  componentId?: string;
+  componentId?: string; // presence of componentId, will enable RNN screenAppearHook
 }
 
 interface RLVState {
@@ -188,16 +188,14 @@ export default function RLV(props: RLVProps) {
   try {
     useNavigationComponentDidAppear(e => {
       console.log(`${e.componentName} appeared`, e);
-      fetchMoreData();
+      componentId && fetchMoreData();
     }, componentId);
-
-    !componentId && console.warn('`componentId` not provided. It may result in recursive loading of RLV list');
   } catch (err) {
     console.log('RNN is not configured');
   }
 
-  useEffect(() => {
-    !NativeModules.RNNBridgeModule && fetchMoreData();
+  useLayoutEffect(() => {
+    !componentId && fetchMoreData();
   }, []);
 
   return (
