@@ -19,6 +19,7 @@ interface RLVProps extends Omit<RecyclerListViewProps, 'dataProvider' | 'layoutP
     updateDataProvider?: (callback: (id: string, newUpdateData: GenericObjectType<any>) => void) => void;
     getDataById?: (callback: (id: string) => GenericObjectType<any>) => void;
     setNewData?: (callback: (newData: any[]) => void) => void;
+    componentId?: string;
 }
 export default function RLV(props: RLVProps): JSX.Element;
 export {};

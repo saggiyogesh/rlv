@@ -11,9 +11,29 @@ const react_1 = __importStar(require("react"));
 const react_native_1 = require("react-native");
 const recyclerlistview_1 = require("recyclerlistview");
 const LayoutUtil_1 = require("./LayoutUtil");
+let useNavigationComponentDidAppear;
+try {
+    const { Navigation } = require('react-native-navigation');
+    useNavigationComponentDidAppear = function useNavigationComponentDidAppearFn(handler, componentId) {
+        react_1.useLayoutEffect(() => {
+            const subscription = Navigation.events().registerComponentDidAppearListener((event) => {
+                const equalComponentId = event.componentId === componentId;
+                if (componentId && !equalComponentId) {
+                    return;
+                }
+                handler(event);
+            });
+            return () => subscription.remove();
+        }, [handler, componentId]);
+    };
+}
+catch (err) {
+    console.log('RNN not used.');
+}
 function RLV(props) {
     const { rowRenderer, getData, limit = 10, layoutProviderType, containerStyle, rlvStyle, rlvContentContainerStyle, cellHeight, noDataMessageRenderer, updateDataProvider, // update existing data
-    getDataById, setNewData, } = props;
+    getDataById, setNewData, // to re render RLV, re init everything
+    componentId, } = props;
     const [state, setState] = react_1.useState({
         dataProvider: new recyclerlistview_1.DataProvider((r1, r2) => {
             return r1 !== r2;
@@ -97,8 +117,18 @@ function RLV(props) {
     function handleListEnd() {
         fetchMoreData();
     }
+    try {
+        useNavigationComponentDidAppear(e => {
+            console.log(`${e.componentName} appeared`, e);
+            fetchMoreData();
+        }, componentId);
+        !componentId && console.warn('`componentId` not provided. It may result in recursive loading of RLV list');
+    }
+    catch (err) {
+        console.log('RNN is not configured');
+    }
     react_1.useEffect(() => {
-        fetchMoreData();
+        !react_native_1.NativeModules.RNNBridgeModule && fetchMoreData();
     }, []);
     return (react_1.default.createElement(react_native_1.View, { style: [styles.container, containerStyle] }, count > 0 ? (react_1.default.createElement(recyclerlistview_1.RecyclerListView, Object.assign({ style: [styles.fl1, rlvStyle], contentContainerStyle: [styles.mar3, rlvContentContainerStyle], onEndReached: handleListEnd, dataProvider: dataProvider, layoutProvider: layoutProvider, rowRenderer: rowRenderer, renderFooter: renderFooter }, props))) : (!showFooterLoader && noDataMessageRenderer && noDataMessageRenderer())));
 }

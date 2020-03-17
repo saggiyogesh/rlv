@@ -1,8 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator, StyleSheet, ViewStyle } from 'react-native';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { View, ActivityIndicator, StyleSheet, ViewStyle, NativeModules } from 'react-native';
+
+// @ts-ignore
+import { ComponentDidAppearEvent } from 'react-native-navigation';
 import { DataProvider, RecyclerListView, LayoutProvider } from 'recyclerlistview';
 import { RecyclerListViewProps } from 'recyclerlistview/dist/reactnative/core/RecyclerListView';
 import { getLayoutProvider, LayoutProviderTypes } from './LayoutUtil';
+
+let useNavigationComponentDidAppear: (handler: (event: any) => void, componentId?: string | undefined) => void;
+
+try {
+  const { Navigation } = require('react-native-navigation');
+  useNavigationComponentDidAppear = function useNavigationComponentDidAppearFn(
+    handler: (event: ComponentDidAppearEvent) => void,
+    componentId?: string,
+  ) {
+    useLayoutEffect(() => {
+      const subscription = Navigation.events().registerComponentDidAppearListener((event: ComponentDidAppearEvent) => {
+        const equalComponentId = event.componentId === componentId;
+
+        if (componentId && !equalComponentId) {
+          return;
+        }
+
+        handler(event);
+      });
+
+      return () => subscription.remove();
+    }, [handler, componentId]);
+  };
+} catch (err) {
+  console.log('RNN not used.');
+}
 
 export type GenericObjectType<T = string> = {
   [k: string]: T;
@@ -28,6 +57,7 @@ interface RLVProps extends Omit<RecyclerListViewProps, 'dataProvider' | 'layoutP
   updateDataProvider?: (callback: (id: string, newUpdateData: GenericObjectType<any>) => void) => void;
   getDataById?: (callback: (id: string) => GenericObjectType<any>) => void;
   setNewData?: (callback: (newData: any[]) => void) => void;
+  componentId?: string;
 }
 
 interface RLVState {
@@ -52,6 +82,7 @@ export default function RLV(props: RLVProps) {
     updateDataProvider, // update existing data
     getDataById,
     setNewData, // to re render RLV, re init everything
+    componentId,
   } = props;
   const [state, setState] = useState<RLVState>({
     dataProvider: new DataProvider((r1, r2) => {
@@ -154,8 +185,19 @@ export default function RLV(props: RLVProps) {
     fetchMoreData();
   }
 
+  try {
+    useNavigationComponentDidAppear(e => {
+      console.log(`${e.componentName} appeared`, e);
+      fetchMoreData();
+    }, componentId);
+
+    !componentId && console.warn('`componentId` not provided. It may result in recursive loading of RLV list');
+  } catch (err) {
+    console.log('RNN is not configured');
+  }
+
   useEffect(() => {
-    fetchMoreData();
+    !NativeModules.RNNBridgeModule && fetchMoreData();
   }, []);
 
   return (
