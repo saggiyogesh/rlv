@@ -120,15 +120,14 @@ function RLV(props) {
     try {
         useNavigationComponentDidAppear(e => {
             console.log(`${e.componentName} appeared`, e);
-            fetchMoreData();
+            componentId && fetchMoreData();
         }, componentId);
-        !componentId && console.warn('`componentId` not provided. It may result in recursive loading of RLV list');
     }
     catch (err) {
         console.log('RNN is not configured');
     }
-    react_1.useEffect(() => {
-        !react_native_1.NativeModules.RNNBridgeModule && fetchMoreData();
+    react_1.useLayoutEffect(() => {
+        !componentId && fetchMoreData();
     }, []);
     return (react_1.default.createElement(react_native_1.View, { style: [styles.container, containerStyle] }, count > 0 ? (react_1.default.createElement(recyclerlistview_1.RecyclerListView, Object.assign({ style: [styles.fl1, rlvStyle], contentContainerStyle: [styles.mar3, rlvContentContainerStyle], onEndReached: handleListEnd, dataProvider: dataProvider, layoutProvider: layoutProvider, rowRenderer: rowRenderer, renderFooter: renderFooter }, props))) : (!showFooterLoader && noDataMessageRenderer && noDataMessageRenderer())));
 }
