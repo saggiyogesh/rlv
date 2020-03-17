@@ -118,8 +118,8 @@ function RLV(props) {
         fetchMoreData();
     }
     try {
-        useNavigationComponentDidAppear(e => {
-            console.log(`${e.componentName} appeared`, e);
+        useNavigationComponentDidAppear(() => {
+            // console.log(`${e.componentName} appeared`, e);
             componentId && fetchMoreData();
         }, componentId);
     }
